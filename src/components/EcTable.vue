@@ -36,7 +36,7 @@ const dynamicItems = [
 onMounted(()=>{
     const output = dynamicItems.map(label => ({
         key: label,
-        width: '100px',
+        width: ``,
         value: []
     }));
     output.unshift(defaultObj.value[0]);
@@ -168,9 +168,16 @@ const removeRow = (index, childIndex) =>{
     border-left: 15px solid transparent;
     border-right: 0px solid transparent;
     border-top: 15px solid orange;
-    top: -15px;
+    top: -16px;
     right: -1px;
-    cursor: pointer;
+    opacity: 0;
+    /* cursor: pointer; */
+}
+.DimensionChanger:hover{
+    opacity: 1;
+}
+.EcTableHeaderItems:last-child .DimensionChanger{
+    display: none;
 }
 </style>
 

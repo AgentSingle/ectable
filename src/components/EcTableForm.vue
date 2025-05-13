@@ -14,6 +14,9 @@ const selectedOptions = ref([]);
 
 watch(selectedOptions, ()=>{
     console.warn(selectedOptions.value)
+    
+
+    console.warn(100/selectedOptions.value.length);
     emit('ecTableFromResponse', selectedOptions.value)
 })
 
