@@ -2,6 +2,7 @@
 import { ref, onMounted, reactive, watch, defineEmits } from 'vue';
 let props = defineProps({
     EcTableKeyItems: Object,
+    EcTableSelectedItems: Object,
 })
 
 const emit = defineEmits(['ecTableFromResponse'])
@@ -11,13 +12,17 @@ const EcTableForm = () =>{
 
 const selectedOptions = ref([]);
 
+onMounted(()=>{
+    selectedOptions.value=props.EcTableSelectedItems;
+    emit('ecTableFromResponse', selectedOptions.value)
+})
 
 watch(selectedOptions, ()=>{
-    console.warn(selectedOptions.value)
-    
-
-    console.warn(100/selectedOptions.value.length);
-    emit('ecTableFromResponse', selectedOptions.value)
+    // console.warn(selectedOptions.value)
+    // console.warn(props.EcTableKeyItems)
+    const sorted = selectedOptions.value.sort((a, b) => a.id - b.id);
+    console.warn(100/sorted.length);
+    emit('ecTableFromResponse', sorted)
 })
 
 </script>
@@ -27,8 +32,13 @@ watch(selectedOptions, ()=>{
         <div class="SelectorWrapper">
             <!-- {{  props.EcTableKeyItems }} -->
             <div class="Selector" v-for="(item, index) in props.EcTableKeyItems.Items" v-bind:key="index">
-                <input type="checkbox" :value="item" v-model="selectedOptions">
-                <span>{{ index+1 }}. {{ item.key }}</span>
+                <input 
+                type="checkbox" 
+                :name="`${index}_${selectedOptions}`" 
+                :value="item" 
+                v-model="selectedOptions" 
+                :selected="item.selected">
+                <span>{{ index+1 }}. {{ item.key }} {{ item.selected }}</span>
             </div>
         </div>
     </form>

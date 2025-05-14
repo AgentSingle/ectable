@@ -3,7 +3,18 @@ import { reactive, ref, onMounted } from 'vue';
 import EcTableForm from '@/components/EcTableForm.vue';
 
 const defaultObj = ref([
-{key: "Project Name", value: []}, {key: "Scope of work", value: []},
+    {
+        key: "Project Name", 
+        id:0, 
+        value: [],
+        selected: true,
+    }, 
+    {
+        key: "Scope of work", 
+        id:11, 
+        value: [],
+        selected: true,
+    },
 ]);
 
 const EcTableTableObj = reactive({
@@ -34,8 +45,9 @@ const dynamicItems = [
 ]
 
 onMounted(()=>{
-    const output = dynamicItems.map(label => ({
+    const output = dynamicItems.map((label, index) => ({
         key: label,
+        id: index+1,
         width: ``,
         value: []
     }));
@@ -67,6 +79,10 @@ const pushRow = (index, childIndex) =>{
 const removeRow = (index, childIndex) =>{
     selectedContent.Items[index].value.splice(childIndex, 1);
 }
+
+const EcTableInputForm = () =>{
+
+}
 </script>
 
 <template>
@@ -74,68 +90,78 @@ const removeRow = (index, childIndex) =>{
         <EcTableForm 
         @ecTableFromResponse="EcTableResponse"
         :EcTableKeyItems="EcTableTableObj"
+        :EcTableSelectedItems="defaultObj"
         ></EcTableForm>
 
-        <div class="EcTableWrapper">
+        <form @submit.prevent="EcTableInputForm">
 
-            <!-- TABLE HEAD -->
-            <div class="EcTableHeader">
-                <div 
-                    class="EcTableHeaderItems" 
-                    v-for="(item, index) in selectedContent.Items" v-bind:key="index"
-                    :style="[{'min-width': item.width}]"
-                >
-                    {{ item.key }}
+            <div class="EcTableWrapper">
 
-                    <div class="DimensionChanger"></div>
-                </div>
-            </div>
-
-            <!-- TABLE BODY -->
-            <div class="EcTableBody">
-                <div class="EcTableRow">
+                <!-- TABLE HEAD -->
+                <div class="EcTableHeader">
                     <div 
-                        class="EcTableBodyItems"
+                        class="EcTableHeaderItems" 
                         v-for="(item, index) in selectedContent.Items" v-bind:key="index"
+                        :style="[{'min-width': item.width}]"
                     >
+                        {{ item.key }}
 
-                        <div v-if="item.value.length>1" class="EcTableBodyChildItemsWrapper">
-                            <div 
-                            class="EcTableBodyChildItems" v-for="(childItem, childIndex) in item.value" v-bind:key="childItem">
-                                <textarea class="EcTableCustomTextArea" name="" :id="childIndex" style="width: 100%; height: 100%;"  v-model="childItem.value"></textarea>
-                                <button type="button"
-                                class="EcTableBodyChildItemsBtn"
-                                @click="removeRow(index, childIndex)">-</button>
-                                <button type="button" class="EcTableBodyChildItemsBtnAdd"
-                                @click="pushRow(index, childIndex)"
-                                >+</button>
+                        <div class="DimensionChanger"></div>
+                    </div>
+                </div>
+
+                <!-- TABLE BODY -->
+                <div class="EcTableBody">
+                    <div class="EcTableRow">
+                        <div 
+                            class="EcTableBodyItems"
+                            v-for="(item, index) in selectedContent.Items" v-bind:key="index"
+                        >
+
+                            <div v-if="item.value.length>1" class="EcTableBodyChildItemsWrapper">
+                                <div 
+                                class="EcTableBodyChildItems" v-for="(childItem, childIndex) in item.value" v-bind:key="childItem">
+                                    <textarea 
+                                    class="EcTableCustomTextArea" 
+                                    :name="`${index}_${childIndex}`"
+                                    style="width: 100%; height: 100%;"  v-model="childItem.value"></textarea>
+                                    <button type="button"
+                                    class="EcTableBodyChildItemsBtn"
+                                    @click="removeRow(index, childIndex)">-</button>
+                                    <button type="button" class="EcTableBodyChildItemsBtnAdd"
+                                    @click="pushRow(index, childIndex)"
+                                    >+</button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div v-else-if="item.value.length==1" class="EcTableBodyChildItemsWrapper">
-                            <div 
-                            class="EcTableBodyChildItems"
-                            v-for="(childItem, childIndex) in item.value" v-bind:key="childIndex">
-                                <textarea class="EcTableCustomTextArea" name="" :id="childIndex" style="width: 100%; height: 100%;" v-model="childItem.value"></textarea>
-                                <button type="button"
-                                class="EcTableBodyChildItemsBtn"
-                                @click="removeRow(index, childIndex)">-</button>
+                            <div v-else-if="item.value.length==1" class="EcTableBodyChildItemsWrapper">
+                                <div 
+                                class="EcTableBodyChildItems"
+                                v-for="(childItem, childIndex) in item.value" v-bind:key="childIndex">
+                                    <textarea 
+                                    class="EcTableCustomTextArea" 
+                                    :name="`${index}_${childIndex}`" 
+                                    style="width: 100%; height: 100%;" v-model="childItem.value"></textarea>
+                                    <button type="button"
+                                    class="EcTableBodyChildItemsBtn"
+                                    @click="removeRow(index, childIndex)">-</button>
 
-                                <button type="button" class="EcTableBodyChildItemsBtnAdd"
-                                @click="pushRow(index, childIndex)"
-                                >+</button>
+                                    <button type="button" class="EcTableBodyChildItemsBtnAdd"
+                                    @click="pushRow(index, childIndex)"
+                                    >+</button>
+                                </div>
                             </div>
-                        </div>
 
-                        
-                        <button type="button" class="EcTableBodyItemsBtn"
-                        @click="addRow(index)"
-                        >+</button>
-                    <!-- {{ item.key }} -->
+                            
+                            <button type="button" class="EcTableBodyItemsBtn"
+                            @click="addRow(index)"
+                            >+</button>
+                        <!-- {{ item.key }} -->
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
 
     </div>
 
@@ -170,12 +196,12 @@ const removeRow = (index, childIndex) =>{
     border-top: 15px solid orange;
     top: -16px;
     right: -1px;
-    opacity: 0;
+    /* opacity: 0; */
     /* cursor: pointer; */
 }
-.DimensionChanger:hover{
+/* .DimensionChanger:hover{
     opacity: 1;
-}
+} */
 .EcTableHeaderItems:last-child .DimensionChanger{
     display: none;
 }
@@ -238,7 +264,7 @@ const removeRow = (index, childIndex) =>{
     width: calc(100% - 15px);
     min-height: 100%;
     height: auto;
-    padding: 0;
+    padding: 2px;
     box-sizing: border-box;
     border: none;
     resize: none;
