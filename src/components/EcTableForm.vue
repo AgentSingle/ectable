@@ -1,47 +1,52 @@
 <script setup>
-import { ref, onMounted, reactive, watch, defineEmits } from 'vue';
+import { ref, onMounted, watch, watchEffect, defineEmits } from 'vue';
+import { 
+    arryShorting, 
+    defaultWidthSetter,
+    changeWidthOnIncrement,
+    changeWidthOnDecrement
+} from '@/components/ecAlgo.js';
+
 let props = defineProps({
     EcTableKeyItems: Object,
     EcTableSelectedItems: Object,
 })
 
 const emit = defineEmits(['ecTableFromResponse'])
-const EcTableForm = () =>{
-    // console.warn('submit')
-}
-
 const selectedOptions = ref([]);
 
 onMounted(()=>{
-    selectedOptions.value=props.EcTableSelectedItems;
-    emit('ecTableFromResponse', selectedOptions.value)
+    let newArr = defaultWidthSetter(props.EcTableSelectedItems);
+    selectedOptions.value = newArr;
 })
 
-watch(selectedOptions, ()=>{
-    // console.warn(selectedOptions.value)
-    // console.warn(props.EcTableKeyItems)
-    const sorted = selectedOptions.value.sort((a, b) => a.id - b.id);
-    console.warn(100/sorted.length);
+
+watch(selectedOptions, (newValue, oldValue)=>{
+    let newArr = [];
+    if(newValue.length>oldValue.length){
+        newArr = changeWidthOnIncrement(oldValue, newValue);
+    }else if(newValue.length<oldValue.length){
+        newArr = changeWidthOnDecrement(oldValue, newValue);
+    }
+
+    const sorted = arryShorting(newArr);
     emit('ecTableFromResponse', sorted)
 })
 
 </script>
 
 <template>
-    <form @submit.prevent="EcTableForm">
-        <div class="SelectorWrapper">
-            <!-- {{  props.EcTableKeyItems }} -->
-            <div class="Selector" v-for="(item, index) in props.EcTableKeyItems.Items" v-bind:key="index">
-                <input 
-                type="checkbox" 
-                :name="`${index}_${selectedOptions}`" 
-                :value="item" 
-                v-model="selectedOptions" 
-                :selected="item.selected">
-                <span>{{ index+1 }}. {{ item.key }} {{ item.selected }}</span>
-            </div>
+    <div class="SelectorWrapper">
+        <!-- {{  props.EcTableKeyItems }} -->
+        <div class="Selector" v-for="(item, index) in props.EcTableKeyItems.Items" v-bind:key="index">
+            <input 
+            type="checkbox" 
+            :name="`${index}_${selectedOptions}`" 
+            :value="item" 
+            v-model="selectedOptions">
+            <span>{{ index+1 }}. {{ item.key }} {{ item.isSelected }}</span>
         </div>
-    </form>
+    </div>
 </template>
 
 <style scoped>

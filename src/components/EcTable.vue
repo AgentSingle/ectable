@@ -1,31 +1,36 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue';
 import EcTableForm from '@/components/EcTableForm.vue';
-
+import EcTableHeader from '@/components/EcTableHeader.vue';
+import { 
+    arryShorting,
+    widthAdjuster,
+    changeWidthOnIncrement
+} from '@/components/ecAlgo.js';
+// import 
+const parentConainerWidth = ref(800);
 const defaultObj = ref([
     {
         key: "Project Name", 
         id:0, 
-        value: [],
-        selected: true,
+        width: 0,
+        value: [
+            {value: ''}
+        ],
     }, 
     {
         key: "Scope of work", 
         id:11, 
-        value: [],
-        selected: true,
+        width: 0,
+        value: [
+            {value: ''}
+        ],
     },
 ]);
 
 const EcTableTableObj = reactive({
     Items:[]
 })
-// const EcTableHeaderArr = ref([
-//     "Project Name",
-// ]);
-// const EcTableBodyArr = ref([
-// {key: "Project Name", value: []}, {key: "Scope of work", value: []},
-// ]);
 
 const selectedContent = reactive({
     Items: [],
@@ -48,19 +53,25 @@ onMounted(()=>{
     const output = dynamicItems.map((label, index) => ({
         key: label,
         id: index+1,
-        width: ``,
-        value: []
+        width: 0,
+        value: [
+            {value: ''}
+        ],
     }));
-    output.unshift(defaultObj.value[0]);
-    output.push(defaultObj.value[1]);
-    // console.warn(output)
+    let defaultObjWithDimension = changeWidthOnIncrement([], defaultObj.value);
+    output.push(...defaultObjWithDimension);
+    let srotedArr = arryShorting(output);
 
-    EcTableTableObj.Items = output;
+    // console.warn(srotedArr);
+
+    EcTableTableObj.Items = srotedArr;
+    // selectedContent.Items = defaultObjWithDimension;
 })
 
 const EcTableResponse = (e)=>{
+    console.warn(e)
+    // let newArr = e;
     selectedContent.Items=e;
-    // console.warn(e)
 }
 
 const addRow = (index) =>{
@@ -83,30 +94,45 @@ const removeRow = (index, childIndex) =>{
 const EcTableInputForm = () =>{
 
 }
+
+const ecTableHeaderResponse = (e)=>{
+    widthAdjuster(
+        selectedContent.Items, 
+        e.widthParcent,
+        e.index
+    )
+}
+
 </script>
 
 <template>
-    <div class="TableWrapper">
+    <div class="TableWrapper" :style="{width: `${parentConainerWidth}px`}">
         <EcTableForm 
         @ecTableFromResponse="EcTableResponse"
         :EcTableKeyItems="EcTableTableObj"
         :EcTableSelectedItems="defaultObj"
         ></EcTableForm>
 
+        
         <form @submit.prevent="EcTableInputForm">
 
             <div class="EcTableWrapper">
 
                 <!-- TABLE HEAD -->
                 <div class="EcTableHeader">
-                    <div 
+                    <div
                         class="EcTableHeaderItems" 
-                        v-for="(item, index) in selectedContent.Items" v-bind:key="index"
-                        :style="[{'min-width': item.width}]"
+                        v-for="(item, index) in selectedContent.Items"
+                        :style="{'width': item.width + '%'}"
                     >
-                        {{ item.key }}
-
-                        <div class="DimensionChanger"></div>
+                    <!-- {{ item.width  }} -->
+                        <EcTableHeader
+                        :EcTableHeaderContent="item"
+                        :contentIndex="index"
+                        :TotalItems="selectedContent.Items.length"
+                        @EcTableHeaderResponse="ecTableHeaderResponse"
+                        class="EcTableHeaderContent"
+                        ></EcTableHeader>
                     </div>
                 </div>
 
@@ -116,6 +142,7 @@ const EcTableInputForm = () =>{
                         <div 
                             class="EcTableBodyItems"
                             v-for="(item, index) in selectedContent.Items" v-bind:key="index"
+                            :style="{'width': item.width + '%'}"
                         >
 
                             <div v-if="item.value.length>1" class="EcTableBodyChildItemsWrapper">
@@ -173,37 +200,21 @@ const EcTableInputForm = () =>{
     width: 100%;
     min-width: 800px;
 }
+
 .EcTableWrapper{
     display: grid;
 }
 .EcTableHeader{
     margin-top: 15px;
     display: flex;
-    justify-content: space-evenly;
 }
 .EcTableHeaderItems{
-    width: 100%;
     height: auto;
     border: 1px solid black;
     position: relative;
 }
-.DimensionChanger{
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 0px solid transparent;
-    border-top: 15px solid orange;
-    top: -16px;
-    right: -1px;
-    /* opacity: 0; */
-    /* cursor: pointer; */
-}
-/* .DimensionChanger:hover{
-    opacity: 1;
-} */
-.EcTableHeaderItems:last-child .DimensionChanger{
-    display: none;
+.EcTableHeaderContent{
+    background-color: white;
 }
 </style>
 
@@ -218,10 +229,8 @@ const EcTableInputForm = () =>{
     height: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
 }
 .EcTableBodyItems{
-    width: 100%;
     height: auto;
     border: 1px solid black;
     position: relative;
