@@ -30,34 +30,32 @@ export const defaultWidthSetter = (arr) =>{
 
 export const changeWidthOnIncrement = (oldItems, newItems) =>{
     let outputArr = [];
-    if(oldItems.length != 0){
-        let uniqueItem = findUniqueItems(newItems, oldItems);
+    let uniqueItem = findUniqueItems(newItems, oldItems);
 
-        let standerDivision = 100/newItems.length;
-        let newArr = newItems;
-        let oldArr = oldItems;
-        if(newArr.length>1){
-            let subtractWidth = standerDivision/oldItems.length;
-            // console.warn(subtractWidth)
-            for(let i=0; i<oldArr.length; i++){
-                let obj = oldArr[i];
-                if(obj.width == 0){
-                    obj.width = standerDivision;
-                }else{
-                    obj.width = obj.width - subtractWidth;
-                }
-                outputArr.push(obj);
+    let standerDivision = 100/newItems.length;
+    let newArr = newItems;
+    let oldArr = oldItems;
+    if(newArr.length>1){
+        let subtractWidth = standerDivision/oldItems.length;
+        // console.warn(subtractWidth)
+        for(let i=0; i<oldArr.length; i++){
+            let obj = oldArr[i];
+            if(obj.width == 0){
+                obj.width = standerDivision;
+            }else{
+                obj.width = obj.width - subtractWidth;
             }
-            let uniqueObj = uniqueItem[0];
-            uniqueObj.width = standerDivision;
-            outputArr.push(uniqueObj);
+            outputArr.push(obj);
         }
-        else{
-            outputArr = defaultWidthSetter(newItems);
-        }
-    }else{
+        let uniqueObj = uniqueItem[0];
+        uniqueObj.width = standerDivision;
+        outputArr.push(uniqueObj);
+    }
+    if(newArr.length==1){
         outputArr = defaultWidthSetter(newItems);
-        
+    }
+    else{
+        outputArr = defaultWidthSetter(newItems);
     }
     return outputArr;
     

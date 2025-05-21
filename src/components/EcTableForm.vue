@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, watchEffect, defineEmits } from 'vue';
+import { ref, onMounted, watch, defineEmits } from 'vue';
 import { 
     arryShorting, 
     defaultWidthSetter,
@@ -16,17 +16,19 @@ const emit = defineEmits(['ecTableFromResponse'])
 const selectedOptions = ref([]);
 
 onMounted(()=>{
-    let newArr = defaultWidthSetter(props.EcTableSelectedItems);
-    selectedOptions.value = newArr;
+    selectedOptions.value=props.EcTableSelectedItems;
 })
-
 
 watch(selectedOptions, (newValue, oldValue)=>{
     let newArr = [];
-    if(newValue.length>oldValue.length){
-        newArr = changeWidthOnIncrement(oldValue, newValue);
-    }else if(newValue.length<oldValue.length){
-        newArr = changeWidthOnDecrement(oldValue, newValue);
+    if(oldValue.length>0){
+        if(newValue.length>oldValue.length){
+            newArr = changeWidthOnIncrement(oldValue, newValue);
+        }else if(newValue.length<oldValue.length){
+            newArr = changeWidthOnDecrement(oldValue, newValue);
+        }
+    }else if(oldValue.length==0){
+        newArr = defaultWidthSetter(selectedOptions.value);
     }
 
     const sorted = arryShorting(newArr);

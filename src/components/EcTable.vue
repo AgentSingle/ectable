@@ -4,8 +4,9 @@ import EcTableForm from '@/components/EcTableForm.vue';
 import EcTableHeader from '@/components/EcTableHeader.vue';
 import { 
     arryShorting,
-    widthAdjuster,
-    changeWidthOnIncrement
+    defaultWidthSetter,
+    changeWidthOnIncrement,
+    widthAdjuster
 } from '@/components/ecAlgo.js';
 // import 
 const parentConainerWidth = ref(800);
@@ -58,19 +59,12 @@ onMounted(()=>{
             {value: ''}
         ],
     }));
-    let defaultObjWithDimension = changeWidthOnIncrement([], defaultObj.value);
-    output.push(...defaultObjWithDimension);
-    let srotedArr = arryShorting(output);
-
-    // console.warn(srotedArr);
-
+    let combineArr = [...defaultObj.value, ...output];
+    let srotedArr = arryShorting(combineArr);
     EcTableTableObj.Items = srotedArr;
-    // selectedContent.Items = defaultObjWithDimension;
 })
 
 const EcTableResponse = (e)=>{
-    console.warn(e)
-    // let newArr = e;
     selectedContent.Items=e;
 }
 
