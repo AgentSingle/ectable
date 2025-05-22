@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, defineEmits } from 'vue';
+import { ref, reactive, watch, onMounted, defineEmits } from 'vue';
 
 const emit = defineEmits(['EcTableHeaderResponse'])
 let props = defineProps({
@@ -47,6 +47,8 @@ const onDrag = (e) => {
 
     dragger.value.style.left = `${x}px`;
 
+    // console.warn(`${parentDragger.value.innerText}`,x)
+
     let newWidth = (x+childRect.width);
 
     if (x>0){
@@ -69,6 +71,11 @@ const stopDrag = () => {
   window.removeEventListener('pointermove', onDrag);
   window.removeEventListener('pointerup', stopDrag);
 }
+
+// watch(parentDragger, ()=>{
+//   console.warn(parentDragger.value)
+//   offset.x = 0;
+// })
 
 </script>
 
@@ -106,7 +113,7 @@ const stopDrag = () => {
     height: 15px;
     width: 15px;
     z-index: 10;
-    background-color: #ffe8bc;
+    background-color: #eeeeee;
     cursor: pointer;
 }
 .movable::after{
@@ -118,6 +125,6 @@ const stopDrag = () => {
     width: 0;
     border-left: 15px solid transparent;
     border-right: 0px solid transparent;
-    border-top: 15px solid orange;
+    border-top: 15px solid gray;
 }
 </style>

@@ -50,6 +50,7 @@ export const changeWidthOnIncrement = (oldItems, newItems) =>{
         let uniqueObj = uniqueItem[0];
         uniqueObj.width = standerDivision;
         outputArr.push(uniqueObj);
+        return outputArr;
     }
     if(newArr.length==1){
         outputArr = defaultWidthSetter(newItems);
@@ -83,7 +84,7 @@ export const changeWidthOnDecrement = (oldItems, newItems) =>{
 
 export const widthAdjuster = (arrayItem, newParcentageWidth, widthChangedIndex) =>{
     if(arrayItem.length<=1){
-        return;
+        return arrayItem;
     }
     let item = arrayItem[widthChangedIndex];
     let oldWidth = item.width;
@@ -95,11 +96,13 @@ export const widthAdjuster = (arrayItem, newParcentageWidth, widthChangedIndex) 
         let reWidth = preWidth - widthDifferance;
         arrayItem[widthChangedIndex +1].width = reWidth;
         item.width = newParcentageWidth;
+        return arrayItem;
     }else if(arrayItem[widthChangedIndex - 1]!=undefined){
         let preWidth = arrayItem[widthChangedIndex - 1].width;
         let reWidth = preWidth + widthDifferance;
         arrayItem[widthChangedIndex -1].width = reWidth;
         item.width = newParcentageWidth;
+        return arrayItem;
     } else{
         return;
     }

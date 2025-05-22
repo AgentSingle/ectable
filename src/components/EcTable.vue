@@ -4,11 +4,9 @@ import EcTableForm from '@/components/EcTableForm.vue';
 import EcTableHeader from '@/components/EcTableHeader.vue';
 import { 
     arryShorting,
-    defaultWidthSetter,
-    changeWidthOnIncrement,
     widthAdjuster
 } from '@/components/ecAlgo.js';
-// import 
+
 const parentConainerWidth = ref(800);
 const defaultObj = ref([
     {
@@ -90,11 +88,11 @@ const EcTableInputForm = () =>{
 }
 
 const ecTableHeaderResponse = (e)=>{
-    widthAdjuster(
+    let respArrayItem = widthAdjuster(
         selectedContent.Items, 
         e.widthParcent,
         e.index
-    )
+    );
 }
 
 </script>
