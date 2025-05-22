@@ -1,66 +1,33 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, watch } from 'vue';
 import EcTableForm from '@/components/EcTableForm.vue';
 import EcTableHeader from '@/components/EcTableHeader.vue';
-import { 
-    arryShorting,
+import {
     widthAdjuster
 } from '@/components/ecAlgo.js';
 
-const parentConainerWidth = ref(800);
-const defaultObj = ref([
-    {
-        key: "Project Name", 
-        id:0, 
-        width: 30,
-        value: [
-            {value: ''}
-        ],
-    }, 
-    {
-        key: "Scope of work", 
-        id:11, 
-        width: 60,
-        value: [
-            {value: ''}
-        ],
-    },
-]);
+const props = defineProps({
+    selectedItems: Array,
+    allItems:Array,
+})
 
 const EcTableTableObj = reactive({
     Items:[]
-})
+});
 
 const selectedContent = reactive({
     Items: [],
-})
+});
 
-const dynamicItems = [
-    "Project Location",
-    "Building Name",
-    "Project Area (Sq. Ft)",
-    "Project Level",
-    "Structure Scope",
-    "Model (Hrs.)",
-    "No of Sheets",
-    "Drawings hrs.",
-    "Number of Pannels",
-    "Total (Hrs.)",
-]
+watch(props, ()=>{
+    const updatedData = props.allItems.map(item => {
+        const match = props.selectedItems.find(d => d.key === item.key);
+        return match ? match : item;
+    });
 
-onMounted(()=>{
-    const output = dynamicItems.map((label, index) => ({
-        key: label,
-        id: index+1,
-        width: 0,
-        value: [
-            {value: ''}
-        ],
-    }));
-    let combineArr = [...defaultObj.value, ...output];
-    let srotedArr = arryShorting(combineArr);
-    EcTableTableObj.Items = srotedArr;
-})
+    EcTableTableObj.Items = updatedData;
+});
+
 
 const EcTableResponse = (e)=>{
     selectedContent.Items=e;
@@ -102,7 +69,7 @@ const ecTableHeaderResponse = (e)=>{
         <EcTableForm 
         @ecTableFromResponse="EcTableResponse"
         :EcTableKeyItems="EcTableTableObj"
-        :EcTableSelectedItems="defaultObj"
+        :EcTableSelectedItems="props.selectedItems"
         ></EcTableForm>
 
         
