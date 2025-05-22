@@ -28,7 +28,13 @@ watch(selectedOptions, (newValue, oldValue)=>{
             newArr = changeWidthOnDecrement(oldValue, newValue);
         }
     }else if(oldValue.length==0){
-        newArr = defaultWidthSetter(selectedOptions.value);
+        newValue.forEach(item => {
+            if (item.width === 0) {
+                newArr = defaultWidthSetter(selectedOptions.value);
+            }else if(item.width != 0){
+                newArr = selectedOptions.value;
+            }
+        });
     }
 
     const sorted = arryShorting(newArr);

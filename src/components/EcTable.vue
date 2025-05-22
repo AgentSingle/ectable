@@ -12,7 +12,7 @@ const defaultObj = ref([
     {
         key: "Project Name", 
         id:0, 
-        width: 0,
+        width: 30,
         value: [
             {value: ''}
         ],
@@ -20,7 +20,7 @@ const defaultObj = ref([
     {
         key: "Scope of work", 
         id:11, 
-        width: 0,
+        width: 60,
         value: [
             {value: ''}
         ],
